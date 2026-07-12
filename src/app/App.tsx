@@ -37,7 +37,7 @@ const SECTIONS: Section[] = [
       {
         units: [
           u(
-            "It is my dream that anyone who finds this book in their hands will gain the self-help tools to get out of pain, restore ease in movement, and give every cell in their body the resources it needs to thrive.",
+            "It is my dream that anyone who discovers FitAlign will gain the self-help tools to get out of pain, restore ease in movement, and give every cell in their body the resources it needs to thrive.",
             "lead",
           ),
           u(
@@ -102,7 +102,7 @@ const SECTIONS: Section[] = [
             "body",
           ),
           u(
-            `What you gain from FitAlign is a sense of knowing—an inner understanding of what feels right—rather than a belief about what you "should" do. This book is full of information that is, in truth, just common sense—though, as we know, common sense isn't always so common.`,
+            `What you gain from FitAlign is a sense of knowing—an inner understanding of what feels right—rather than a belief about what you "should" do. The ideas you'll encounter here are, in truth, just common sense—though, as we know, common sense isn't always so common.`,
             "body",
           ),
         ],
@@ -267,7 +267,7 @@ const SECTIONS: Section[] = [
             "body",
           ),
           u(
-            "As you read this book, you'll see numerous images and case studies that illustrate these profound physical changes—evidence of what's possible when we retrain the nervous system. These examples are meant to tell a story and to inspire: showing how the movements of breathing can strengthen, tone, and support the body from the inside out.",
+            "As you continue, you'll see numerous images and case studies that illustrate these profound physical changes—evidence of what's possible when we retrain the nervous system. These examples are meant to tell a story and to inspire: showing how the movements of breathing can strengthen, tone, and support the body from the inside out.",
             "body",
           ),
         ],
@@ -294,7 +294,7 @@ const SECTIONS: Section[] = [
       {
         units: [
           u(
-            "Yet, as you look at the before-and-after images in this book, you may be surprised to see how much younger and more vibrant people can appear—without spending a dime on temporary, often harmful interventions that introduce chemicals and foreign objects into the body.",
+            "Yet, as you look at FitAlign before-and-after images, you may be surprised to see how much younger and more vibrant people can appear—without spending a dime on temporary, often harmful interventions that introduce chemicals and foreign objects into the body.",
             "body",
           ),
           u(
