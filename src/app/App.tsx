@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
 import { motion } from "motion/react";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
@@ -172,59 +172,115 @@ const TOTAL_PAGES = 1 + SCREEN_LIST.length;
 // ─── TYPOGRAPHY ───────────────────────────────────────────────────────────────
 
 function styleClass(s: S): string {
-  const base = "text-center mx-auto";
+  const base = "text-center mx-auto w-full break-words";
   switch (s) {
-    case "hero":
-      return `${base} max-w-[42rem] text-white/88 leading-[1.15] text-[clamp(2.4rem,6vw,5.2rem)]`;
-    case "punchline":
-      return `${base} max-w-[46rem] text-white/92 leading-[1.22] text-[clamp(1.55rem,3.6vw,3.1rem)]`;
-    case "lead":
-      return `${base} max-w-[50rem] text-white/78 leading-[1.44] text-[clamp(1.1rem,2.5vw,1.9rem)]`;
-    case "body":
-      return `${base} max-w-[52rem] text-white/52 leading-[1.85] text-[clamp(0.9rem,1.5vw,1.18rem)]`;
+    case "hero":      return `${base} max-w-[42rem] text-white/88 leading-[1.15]`;
+    case "punchline": return `${base} max-w-[46rem] text-white/92 leading-[1.22]`;
+    case "lead":      return `${base} max-w-[50rem] text-white/78 leading-[1.44]`;
+    case "body":      return `${base} max-w-[52rem] text-white/52 leading-[1.85]`;
   }
 }
 
-function fontStyle(s: S): React.CSSProperties {
-  if (s === "body") return { fontFamily: "'DM Sans', sans-serif" };
-  return { fontFamily: "'Fraunces', serif", fontOpticalSizing: "auto" } as React.CSSProperties;
+function textStyle(s: S, large: boolean): React.CSSProperties {
+  const k = large ? 1.5 : 1;
+  const fontSize = {
+    hero:      `clamp(${2.4*k}rem,${6*k}vw,${5.2*k}rem)`,
+    punchline: `clamp(${1.55*k}rem,${3.6*k}vw,${3.1*k}rem)`,
+    lead:      `clamp(${1.1*k}rem,${2.5*k}vw,${1.9*k}rem)`,
+    body:      `clamp(${0.9*k}rem,${1.5*k}vw,${1.18*k}rem)`,
+  }[s];
+  const font: React.CSSProperties = s === "body"
+    ? { fontFamily: "'DM Sans', sans-serif" }
+    : { fontFamily: "'Fraunces', serif", fontOpticalSizing: "auto" } as React.CSSProperties;
+  return { ...font, fontSize };
 }
 
 // ─── SCREEN ───────────────────────────────────────────────────────────────────
 
+const MT_TRANSITION = "margin-top 0.52s cubic-bezier(0.16,1,0.3,1)";
+
 function ScreenView({
-  screen, bg, revealed, isReplay, animKey,
+  screen, bg, revealed, isReplay, animKey, large,
 }: {
-  screen: Screen; bg: string; revealed: number; isReplay: boolean; animKey: number;
+  screen: Screen; bg: string; revealed: number; isReplay: boolean; animKey: number; large: boolean;
 }) {
   const units = isReplay ? screen.units : screen.units.slice(0, revealed);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const groupRef = useRef<HTMLDivElement>(null);
+  const [overflowMode, setOverflowMode] = useState(false);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+    const group = groupRef.current;
+    if (!container || !group || group.children.length === 0) return;
+
+    const containerH = container.clientHeight;
+    const groupH = group.scrollHeight;
+
+    const applyMt = (mt: number, animate: boolean) => {
+      group.style.transition = animate ? MT_TRANSITION : "none";
+      group.style.marginTop = `${mt}px`;
+    };
+
+    if (isReplay) {
+      // Snap to center all content immediately — units stagger in from there
+      setOverflowMode(false);
+      applyMt(Math.max(0, (containerH - groupH) / 2), false);
+      return;
+    }
+
+    const isOver = groupH > containerH;
+    setOverflowMode(isOver);
+
+    // Snap on first reveal of a screen, animate on subsequent reveals
+    const shouldAnimate = revealed > 1;
+
+    if (isOver) {
+      const lastEl = group.children[group.children.length - 1] as HTMLElement;
+      const currentMt = parseFloat(group.style.marginTop) || 0;
+      const intraTop = lastEl.offsetParent === container
+        ? lastEl.offsetTop - currentMt
+        : lastEl.offsetTop;
+      applyMt(containerH / 2 - intraTop - lastEl.offsetHeight / 2, shouldAnimate);
+    } else {
+      applyMt(Math.max(0, (containerH - groupH) / 2), shouldAnimate);
+    }
+  }, [revealed, isReplay, animKey]);
+
   return (
     <div
-      className="absolute inset-0 overflow-hidden flex items-center justify-center px-8 md:px-14"
+      ref={containerRef}
+      data-content-scroll
+      className="absolute inset-0 overflow-hidden px-8 md:px-14"
       style={{ background: bg }}
     >
       <motion.div
+        ref={groupRef as React.RefObject<HTMLDivElement>}
         layout
         transition={{ layout: { duration: 0.6, ease: EASE } }}
-        className="flex flex-col items-center w-full gap-12 py-14"
+        className="w-full flex flex-col items-center gap-12 py-14"
       >
-        {units.map((unit, i) => (
-          <motion.p
-            key={`${animKey}-${i}`}
-            layout
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              layout: { duration: 0.6, ease: EASE },
-              opacity: { duration: 0.82, ease: EASE, delay: isReplay ? 0.08 + i * 0.21 : 0 },
-              y: { duration: 0.82, ease: EASE, delay: isReplay ? 0.08 + i * 0.21 : 0 },
-            }}
-            className={styleClass(unit.s)}
-            style={fontStyle(unit.s)}
-          >
-            {unit.text}
-          </motion.p>
-        ))}
+        {units.map((unit, i) => {
+          const isNewest = i === units.length - 1;
+          const dimmed = overflowMode && !isNewest && !isReplay;
+          return (
+            <motion.p
+              key={`${animKey}-${i}`}
+              layout
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: dimmed ? 0.32 : 1, y: 0 }}
+              transition={{
+                layout: { duration: 0.6, ease: EASE },
+                opacity: { duration: 0.82, ease: EASE, delay: isReplay ? 0.08 + i * 0.21 : 0 },
+                y: { duration: 0.82, ease: EASE, delay: isReplay ? 0.08 + i * 0.21 : 0 },
+              }}
+              className={styleClass(unit.s)}
+              style={textStyle(unit.s, large)}
+            >
+              {unit.text}
+            </motion.p>
+          );
+        })}
       </motion.div>
     </div>
   );
@@ -268,7 +324,7 @@ function CoverScreen() {
           FitAlign
         </h1>
         <p
-          className="text-white/14 tracking-[0.22em] mt-7 text-[#ffffffb8] text-[13px]"
+          className="text-white/50 tracking-[0.22em] mt-7 text-white text-[13px]"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
           Change Your Posture, Change Your Life
@@ -310,6 +366,7 @@ export default function App() {
   const [animKeys, setAnimKeys] = useState<number[]>(() =>
     new Array(SCREEN_LIST.length).fill(0)
   );
+  const [largeText, setLargeText] = useState(false);
   // When jumping via dot click, skip the slide animation
   const [skipAnim, setSkipAnim] = useState(false);
 
@@ -387,7 +444,16 @@ export default function App() {
   );
 
   useEffect(() => {
+    const getScrollEl = (target: EventTarget | null) =>
+      (target as Element)?.closest("[data-content-scroll]") as HTMLElement | null;
+    const scrollBound = (el: HTMLElement, down: boolean) => {
+      const { scrollTop, scrollHeight, clientHeight } = el;
+      return down ? scrollTop + clientHeight >= scrollHeight - 2 : scrollTop <= 1;
+    };
+
     const onWheel = (e: WheelEvent) => {
+      const el = getScrollEl(e.target);
+      if (el && !scrollBound(el, e.deltaY > 0)) return; // let element scroll natively
       e.preventDefault();
       if (lockRef.current) { accRef.current = 0; return; }
       accRef.current += e.deltaY;
@@ -401,9 +467,14 @@ export default function App() {
       else if (["ArrowUp", "PageUp"].includes(e.key)) { e.preventDefault(); advance(false); }
     };
     let ty = 0;
-    const onTS = (e: TouchEvent) => { ty = e.touches[0].clientY; };
+    let touchEl: HTMLElement | null = null;
+    const onTS = (e: TouchEvent) => {
+      ty = e.touches[0].clientY;
+      touchEl = getScrollEl(e.target);
+    };
     const onTE = (e: TouchEvent) => {
       const dy = ty - e.changedTouches[0].clientY;
+      if (touchEl && !scrollBound(touchEl, dy > 0)) return;
       if (Math.abs(dy) > 55) advance(dy > 0);
     };
 
@@ -463,33 +534,82 @@ export default function App() {
           />
         </div>
         <div className="flex flex-col items-center gap-[6px] pt-[11px] pointer-events-auto">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <button
               onClick={() => goTo(0, false)}
-              className={`rounded-full transition-all duration-500 cursor-pointer ${
-                pageIndex === 0 ? "w-5 h-[2px] bg-[#c8a97e]" : "w-[3px] h-[3px] bg-white/12 hover:bg-white/28"
-              }`}
-            />
+              className="p-2 cursor-pointer flex items-center justify-center"
+              aria-label="Go to cover"
+            >
+              <span className={`block rounded-full transition-all duration-500 ${
+                pageIndex === 0 ? "w-6 h-[3px] bg-[#c8a97e]" : "w-[6px] h-[6px] bg-white/20 hover:bg-white/50"
+              }`} />
+            </button>
             {SECTIONS.map((_, i) => (
               <button
                 key={i}
                 onClick={() => jumpToSection(i)}
-                className={`rounded-full transition-all duration-500 cursor-pointer ${
+                className="p-2 cursor-pointer flex items-center justify-center"
+                aria-label={`Go to section ${i + 1}`}
+              >
+                <span className={`block rounded-full transition-all duration-500 ${
                   activeSi === i && pageIndex > 0
-                    ? "w-5 h-[2px] bg-[#c8a97e]"
-                    : "w-[3px] h-[3px] bg-white/12 hover:bg-white/28"
-                }`}
-              />
+                    ? "w-6 h-[3px] bg-[#c8a97e]"
+                    : "w-[6px] h-[6px] bg-white/20 hover:bg-white/50"
+                }`} />
+              </button>
             ))}
           </div>
           <span
-            className="tracking-[0.32em] text-white/16 transition-all duration-300 text-[#ffffff75] text-[9px]"
+            className="tracking-[0.32em] transition-all duration-300 text-[#ffffffb0] text-[9px]"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
             {pageIndex === 0 ? "INTRODUCTION" : `${SECTIONS[activeSi]?.num ?? "01"} / 04`}
           </span>
         </div>
       </div>
+
+      {/* ── Back to top ─────────────────────────────────────────────────── */}
+      {pageIndex > 0 && (
+        <button
+          onClick={() => goTo(0)}
+          className="fixed bottom-6 left-4 z-50 flex items-center gap-1.5 rounded-full px-3.5 py-2 bg-white/[0.07] border border-white/[0.1] text-white/40 hover:text-white/70 hover:bg-white/[0.12] backdrop-blur-sm transition-all duration-300 active:scale-95"
+          style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "12px", letterSpacing: "0.06em" }}
+          aria-label="Back to beginning"
+        >
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+            <path d="M5 8.5V1.5M1.5 5L5 1.5L8.5 5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          START
+        </button>
+      )}
+
+      {/* ── Large Text toggle — mobile only ────────────────────────────── */}
+      <button
+        className={`md:hidden fixed bottom-6 right-4 z-50 flex items-center gap-2 rounded-full px-4 py-2.5 border backdrop-blur-sm transition-all duration-300 active:scale-95 ${
+          largeText
+            ? "bg-[#c8a97e]/20 border-[#c8a97e]/50 text-[#c8a97e]"
+            : "bg-white/[0.07] border-white/[0.1] text-white/50"
+        }`}
+        style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", letterSpacing: "0.04em" }}
+        onClick={() => {
+          setLargeText(v => !v);
+          // Reset current content screen to first unit so layout re-centers with new font sizes
+          const gi = pageRef.current - 1;
+          if (gi >= 0) {
+            const next = [...revRef.current];
+            next[gi] = 1;
+            revRef.current = next;
+            setRevealed([...next]);
+            setIsReplay(prev => { const n = [...prev]; n[gi] = false; return n; });
+            setAnimKeys(prev => { const n = [...prev]; n[gi] = prev[gi] + 1; return n; });
+          }
+        }}
+        aria-pressed={largeText}
+        aria-label="Toggle large text for accessibility"
+      >
+        <span style={{ fontSize: "17px", fontWeight: 700, lineHeight: 1 }}>Aa</span>
+        Large Text
+      </button>
 
       {/* ── Cover — page 0 ─────────────────────────────────────────────── */}
       <div
@@ -520,6 +640,7 @@ export default function App() {
             revealed={revealed[gi] ?? 0}
             isReplay={isReplay[gi] ?? false}
             animKey={animKeys[gi] ?? 0}
+            large={largeText}
           />
         </div>
       ))}
