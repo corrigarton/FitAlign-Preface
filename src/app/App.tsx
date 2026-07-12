@@ -3,244 +3,171 @@ import { motion } from "motion/react";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
 
-// ─── TYPES ────────────────────────────────────────────────────────────────────
-
-// hero      = full display, Fraunces, light weight — for singular impactful lines only
-// punchline = large, Fraunces semibold — emphatic close or declaration
-// lead      = medium, Fraunces — important supporting statement
-// body      = normal reading text, DM Sans — paragraphs, explanations, stories
 type S = "hero" | "punchline" | "lead" | "body";
-
 interface Unit { text: string; s: S }
 interface Screen { units: Unit[] }
 interface Section { id: string; num: string; bg: string; screens: Screen[] }
-
 const u = (text: string, s: S): Unit => ({ text, s });
 
 // ─── CONTENT ──────────────────────────────────────────────────────────────────
-// Body units can hold 1-3 related sentences — they reveal together on one scroll click.
-// Only the most quotable, standalone lines get hero/punchline treatment.
 
 const SECTIONS: Section[] = [
   {
-    id: "s1",
-    num: "01",
+    id: "s1", num: "01",
     bg: "radial-gradient(ellipse at 22% 58%, rgba(210,190,155,0.11) 0%, transparent 54%), #080808",
     screens: [
-      {
-        units: [
-          u("It is my dream that anyone who finds this book in their hands will gain the self-help tools to get out of pain, restore ease in movement, and give every cell in their body the resources it needs to thrive.", "lead"),
-          u(`I hope you feel light, energized, and comfortable—what I like to call the "kid body."`, "punchline"),
-        ],
-      },
-      {
-        units: [
-          u("Whenever people stand upright with strong, relaxed breathing muscles, it becomes almost impossible to feel sad or discouraged.", "lead"),
-          u("I have been delighted to see my clients not only relieve pain quickly but also become more lighthearted, energized, attractive, and youthful.", "body"),
-        ],
-      },
-      {
-        units: [
-          u("When I am instructing people, I often tell jokes so they will laugh. When they do, I ask them to notice how laughter changes the tension in their abdomen.", "body"),
-          u("Laughter is a form of pandiculation.", "hero"),
-          u("A natural reset that relaxes the torso muscles by making them contract deeply for several seconds. After we laugh, there is a distinct feeling of relaxation and activation in the abdominal region.", "body"),
-        ],
-      },
-      {
-        units: [
-          u(`I like to call it the "wisdom of laughter."`, "punchline"),
-          u("Contracting your muscles in this way resets them via the nervous system, helping them become both more relaxed and more toned.", "body"),
-        ],
-      },
-      {
-        units: [
-          u("Trying to stretch or pull on muscles often triggers a stretch reflex, which can create even more tension and discomfort. For many people, stretching feels stressful or even painful, yet they make themselves do it anyway.", "body"),
-          u("I do not believe we can find comfort through discomfort.", "hero"),
-        ],
-      },
-      {
-        units: [
-          u("And just as I tell my clients, I ask you not to believe a word I say until you feel it for yourself.", "body"),
-          u(`What you gain from FitAlign is a sense of knowing—an inner understanding of what feels right—rather than a belief about what you "should" do. This book is full of information that is, in truth, just common sense—though, as we know, common sense isn't always so common.`, "body"),
-        ],
-      },
-      {
-        units: [
-          u("Much of what you will learn in FitAlign is how to do less.", "hero"),
-          u(`Remember the adage, "less is more"? It's especially true for the body.`, "body"),
-        ],
-      },
-      {
-        units: [
-          u("When we restore deep, natural breathing, our bio-intelligence begins to release the compensatory patterns we've developed through modern lifestyles of sitting, stressing, and driving.", "body"),
-          u("Our nervous system takes cues from how we use our voluntary muscles—when we exert unnecessary effort, the sympathetic (stress) response is activated. The longer we remain in that state, the more likely we are to develop autoimmune disorders and chronic pain.", "body"),
-        ],
-      },
-      {
-        units: [
-          u("In my experience working with clients, I've seen that even those who exercise excessively can push themselves into a stress mode. Much of what I now teach focuses on developing perception, kinesthetic awareness, and the ability to truly feel the body.", "body"),
-          u("People are often amazed that these exercises are so effective—and yet so gentle.", "punchline"),
-        ],
-      },
-      {
-        units: [
-          u("We do not need to suffer to feel good.", "hero"),
-          u("Painful workouts are not the only path to gain; in fact, doing less with more awareness often leads to far more profound results.", "body"),
-        ],
-      },
+      { units: [
+        u("It is my dream that anyone who finds this book in their hands will gain the self-help tools to get out of pain, restore ease in movement, and give every cell in their body the resources it needs to thrive.", "lead"),
+        u(`I hope you feel light, energized, and comfortable—what I like to call the "kid body."`, "punchline"),
+      ]},
+      { units: [
+        u("Whenever people stand upright with strong, relaxed breathing muscles, it becomes almost impossible to feel sad or discouraged.", "lead"),
+        u("I have been delighted to see my clients not only relieve pain quickly but also become more lighthearted, energized, attractive, and youthful.", "body"),
+      ]},
+      { units: [
+        u("When I am instructing people, I often tell jokes so they will laugh. When they do, I ask them to notice how laughter changes the tension in their abdomen.", "body"),
+        u("Laughter is a form of pandiculation.", "hero"),
+        u("A natural reset that relaxes the torso muscles by making them contract deeply for several seconds. After we laugh, there is a distinct feeling of relaxation and activation in the abdominal region.", "body"),
+      ]},
+      { units: [
+        u(`I like to call it the "wisdom of laughter."`, "punchline"),
+        u("Contracting your muscles in this way resets them via the nervous system, helping them become both more relaxed and more toned.", "body"),
+      ]},
+      { units: [
+        u("Trying to stretch or pull on muscles often triggers a stretch reflex, which can create even more tension and discomfort. For many people, stretching feels stressful or even painful, yet they make themselves do it anyway.", "body"),
+        u("I do not believe we can find comfort through discomfort.", "hero"),
+      ]},
+      { units: [
+        u("And just as I tell my clients, I ask you not to believe a word I say until you feel it for yourself.", "body"),
+        u(`What you gain from FitAlign is a sense of knowing—an inner understanding of what feels right—rather than a belief about what you "should" do. This book is full of information that is, in truth, just common sense—though, as we know, common sense isn't always so common.`, "body"),
+      ]},
+      { units: [
+        u("Much of what you will learn in FitAlign is how to do less.", "hero"),
+        u(`Remember the adage, "less is more"? It's especially true for the body.`, "body"),
+      ]},
+      { units: [
+        u("When we restore deep, natural breathing, our bio-intelligence begins to release the compensatory patterns we've developed through modern lifestyles of sitting, stressing, and driving.", "body"),
+        u("Our nervous system takes cues from how we use our voluntary muscles—when we exert unnecessary effort, the sympathetic (stress) response is activated. The longer we remain in that state, the more likely we are to develop autoimmune disorders and chronic pain.", "body"),
+      ]},
+      { units: [
+        u("In my experience working with clients, I've seen that even those who exercise excessively can push themselves into a stress mode. Much of what I now teach focuses on developing perception, kinesthetic awareness, and the ability to truly feel the body.", "body"),
+        u("People are often amazed that these exercises are so effective—and yet so gentle.", "punchline"),
+      ]},
+      { units: [
+        u("We do not need to suffer to feel good.", "hero"),
+        u("Painful workouts are not the only path to gain; in fact, doing less with more awareness often leads to far more profound results.", "body"),
+      ]},
     ],
   },
   {
-    id: "s2",
-    num: "02",
+    id: "s2", num: "02",
     bg: "radial-gradient(ellipse at 78% 32%, rgba(110,135,190,0.09) 0%, transparent 50%), linear-gradient(148deg, #090a0e 0%, #080808 100%)",
     screens: [
-      {
-        units: [
-          u("My students spend more time feeling and less time thinking.", "punchline"),
-          u("The brain is like a computer that can sense itself, and when people stay present with the feeling of breathing, they begin to connect with the deepest levels of their being.", "body"),
-        ],
-      },
-      {
-        units: [
-          u("Many people exercise while listening to loud music, drowning out the subtle sensations of the body and the rhythm of their own breath.", "body"),
-          u("Yet being alive in this body is a miracle.", "hero"),
-          u("Even the simplest act—like walking barefoot across the grass—is a complex phenomenon beyond what our conscious mind can comprehend.", "body"),
-        ],
-      },
-      {
-        units: [
-          u("Every breath we take and every move we make is precious beyond words.", "punchline"),
-          u("Over the past 30 years of teaching, I have been privileged to witness people release deeply held traumas from PTSD through the movements of breathing and the primal functional patterns used in FitAlign.", "body"),
-        ],
-      },
-      {
-        units: [
-          u("I have guided individuals with severe osteoarthritis to use breath to reawaken dormant postural forces—allowing them, for the first time in years, to stand upright without pain.", "body"),
-          u("Again and again, I've seen people find relief from sciatica, plantar fasciitis, and back pain—sometimes within their very first FitAlign session.", "body"),
-        ],
-      },
-      {
-        units: [
-          u("Many who initially came seeking relief from shoulder or neck pain discovered not only freedom from physical discomfort but also a newfound sense of happiness. Weak breathing muscles and poor posture are often accompanied by anxiety and depression.", "body"),
-          u("These transformations are no coincidence.", "punchline"),
-        ],
-      },
-      {
-        units: [
-          u("By using the breath to correct posture,", "hero"),
-          u("we can simultaneously ease both physical and emotional pain.", "punchline"),
-        ],
-      },
-      {
-        units: [
-          u("The human brain makes up only about 2% of total body weight in the average adult, yet it consumes roughly 20% of the body's oxygen and calories. When the rib cage collapses and breathing becomes shallow, the brain and body both suffer.", "body"),
-          u("Posture and breathing are inseparable—each defines and reinforces the other.", "lead"),
-        ],
-      },
-      {
-        units: [
-          u("In my search for deeper answers, I began developing YogAlign and later FitAlign Posture Trainings. Over the past 25 years, I have witnessed extraordinary transformations using these methods.", "body"),
-          u("I've seen people heal hernias without surgery, strengthen flat feet to form natural arches and longer toes, and recover from hip joint pain—avoiding labral tear surgeries altogether.", "body"),
-          u(`I've worked with individuals told their knees were "bone on bone" and that joint replacement was their only option—only to see them become pain-free and return to jogging and downhill skiing without surgery.`, "body"),
-        ],
-      },
-      {
-        units: [
-          u("I've also watched the stress response patterns that create scoliosis unwind, freeing people from the twists in their spines.", "body"),
-          u("As you read this book, you'll see numerous images and case studies that illustrate these profound physical changes—evidence of what's possible when we retrain the nervous system. These examples are meant to tell a story and to inspire: showing how the movements of breathing can strengthen, tone, and support the body from the inside out.", "body"),
-        ],
-      },
+      { units: [
+        u("My students spend more time feeling and less time thinking.", "punchline"),
+        u("The brain is like a computer that can sense itself, and when people stay present with the feeling of breathing, they begin to connect with the deepest levels of their being.", "body"),
+      ]},
+      { units: [
+        u("Many people exercise while listening to loud music, drowning out the subtle sensations of the body and the rhythm of their own breath.", "body"),
+        u("Yet being alive in this body is a miracle.", "hero"),
+        u("Even the simplest act—like walking barefoot across the grass—is a complex phenomenon beyond what our conscious mind can comprehend.", "body"),
+      ]},
+      { units: [
+        u("Every breath we take and every move we make is precious beyond words.", "punchline"),
+        u("Over the past 30 years of teaching, I have been privileged to witness people release deeply held traumas from PTSD through the movements of breathing and the primal functional patterns used in FitAlign.", "body"),
+      ]},
+      { units: [
+        u("I have guided individuals with severe osteoarthritis to use breath to reawaken dormant postural forces—allowing them, for the first time in years, to stand upright without pain.", "body"),
+        u("Again and again, I've seen people find relief from sciatica, plantar fasciitis, and back pain—sometimes within their very first FitAlign session.", "body"),
+      ]},
+      { units: [
+        u("Many who initially came seeking relief from shoulder or neck pain discovered not only freedom from physical discomfort but also a newfound sense of happiness. Weak breathing muscles and poor posture are often accompanied by anxiety and depression.", "body"),
+        u("These transformations are no coincidence.", "punchline"),
+      ]},
+      { units: [
+        u("By using the breath to correct posture,", "hero"),
+        u("we can simultaneously ease both physical and emotional pain.", "punchline"),
+      ]},
+      { units: [
+        u("The human brain makes up only about 2% of total body weight in the average adult, yet it consumes roughly 20% of the body's oxygen and calories. When the rib cage collapses and breathing becomes shallow, the brain and body both suffer.", "body"),
+        u("Posture and breathing are inseparable—each defines and reinforces the other.", "lead"),
+      ]},
+      { units: [
+        u("In my search for deeper answers, I began developing YogAlign and later FitAlign Posture Trainings. Over the past 25 years, I have witnessed extraordinary transformations using these methods.", "body"),
+        u("I've seen people heal hernias without surgery, strengthen flat feet to form natural arches and longer toes, and recover from hip joint pain—avoiding labral tear surgeries altogether.", "body"),
+        u(`I've worked with individuals told their knees were "bone on bone" and that joint replacement was their only option—only to see them become pain-free and return to jogging and downhill skiing without surgery.`, "body"),
+      ]},
+      { units: [
+        u("I've also watched the stress response patterns that create scoliosis unwind, freeing people from the twists in their spines.", "body"),
+        u("As you read this book, you'll see numerous images and case studies that illustrate these profound physical changes—evidence of what's possible when we retrain the nervous system. These examples are meant to tell a story and to inspire: showing how the movements of breathing can strengthen, tone, and support the body from the inside out.", "body"),
+      ]},
     ],
   },
   {
-    id: "s3",
-    num: "03",
+    id: "s3", num: "03",
     bg: "radial-gradient(ellipse at 52% 72%, rgba(88,78,118,0.10) 0%, transparent 54%), #080808",
     screens: [
-      {
-        units: [
-          u("Our advertising and media are saturated with promotions for creams, potions, Botox, and surgeries promising to make us more attractive. Billions of dollars are spent each year on facelifts, breast implants, and cosmetic procedures in the pursuit of beauty.", "body"),
-          u("I believe that all humans are naturally beautiful and radiant when they embody aligned, natural posture.", "punchline"),
-        ],
-      },
-      {
-        units: [
-          u("Yet, as you look at the before-and-after images in this book, you may be surprised to see how much younger and more vibrant people can appear—without spending a dime on temporary, often harmful interventions that introduce chemicals and foreign objects into the body.", "body"),
-          u("Before turning to pills or surgery, let us consider the transformative potential of using the movements of breathing to restore posture and enhance the health and vitality of every cell in the body.", "lead"),
-        ],
-      },
-      {
-        units: [
-          u("What if we could teach our elders to use conscious breathing to improve their quality of life? What if many people currently dependent on pain medication could find relief simply through breath-based movement?", "body"),
-          u("What if children learned experiential anatomy and the importance of strong breathing muscles before years of poor posture and misalignment took their toll?", "body"),
-          u("Could deep breathing reduce depression, or help treat addictions and phobias?", "lead"),
-        ],
-      },
-      {
-        units: [
-          u("It is imperative that we develop a new field of medicine—Posturology—with specialists trained to use breathing as a foundation for healing. Emerging research confirms that surgeries, pills, and procedures often fail to address the underlying causes of chronic pain.", "body"),
-          u("Posture and breathing have become major focus areas in health science, with mounting evidence revealing their profound influence on mood, organ function, digestion, elimination, hormones, sexual vitality, and even joint longevity.", "body"),
-        ],
-      },
-      {
-        units: [
-          u("One recent study linked forward head posture to cognitive decline and dementia. The brain, though only about 2% of the body's weight, requires roughly 20% of its oxygen supply.", "body"),
-          u("When the skull shifts forward from the spine, blood flow through the vertebral arteries can be dramatically reduced—depriving the brain of oxygen and accelerating cell death.", "body"),
-          u("Posture matters—a lot.", "hero"),
-        ],
-      },
-      {
-        units: [
-          u("Music and singing can heal the body and the soul! I love to sing and play guitar, write songs and share music with people!", "body"),
-        ],
-      },
+      { units: [
+        u("Our advertising and media are saturated with promotions for creams, potions, Botox, and surgeries promising to make us more attractive. Billions of dollars are spent each year on facelifts, breast implants, and cosmetic procedures in the pursuit of beauty.", "body"),
+        u("I believe that all humans are naturally beautiful and radiant when they embody aligned, natural posture.", "punchline"),
+      ]},
+      { units: [
+        u("Yet, as you look at the before-and-after images in this book, you may be surprised to see how much younger and more vibrant people can appear—without spending a dime on temporary, often harmful interventions that introduce chemicals and foreign objects into the body.", "body"),
+        u("Before turning to pills or surgery, let us consider the transformative potential of using the movements of breathing to restore posture and enhance the health and vitality of every cell in the body.", "lead"),
+      ]},
+      { units: [
+        u("What if we could teach our elders to use conscious breathing to improve their quality of life? What if many people currently dependent on pain medication could find relief simply through breath-based movement?", "body"),
+        u("What if children learned experiential anatomy and the importance of strong breathing muscles before years of poor posture and misalignment took their toll?", "body"),
+        u("Could deep breathing reduce depression, or help treat addictions and phobias?", "lead"),
+      ]},
+      { units: [
+        u("It is imperative that we develop a new field of medicine—Posturology—with specialists trained to use breathing as a foundation for healing. Emerging research confirms that surgeries, pills, and procedures often fail to address the underlying causes of chronic pain.", "body"),
+        u("Posture and breathing have become major focus areas in health science, with mounting evidence revealing their profound influence on mood, organ function, digestion, elimination, hormones, sexual vitality, and even joint longevity.", "body"),
+      ]},
+      { units: [
+        u("One recent study linked forward head posture to cognitive decline and dementia. The brain, though only about 2% of the body's weight, requires roughly 20% of its oxygen supply.", "body"),
+        u("When the skull shifts forward from the spine, blood flow through the vertebral arteries can be dramatically reduced—depriving the brain of oxygen and accelerating cell death.", "body"),
+        u("Posture matters—a lot.", "hero"),
+      ]},
+      { units: [
+        u("Music and singing can heal the body and the soul! I love to sing and play guitar, write songs and share music with people!", "body"),
+      ]},
     ],
   },
   {
-    id: "s4",
-    num: "04",
+    id: "s4", num: "04",
     bg: "radial-gradient(ellipse at 50% 22%, rgba(200,169,126,0.09) 0%, transparent 56%), linear-gradient(to bottom, #100f0d, #080808)",
     screens: [
-      {
-        units: [
-          u("I am simply a messenger—here to share these self-help tools. It is up to you to use them.", "body"),
-          u("Ultimately, no one can heal you but you.", "hero"),
-        ],
-      },
-      {
-        units: [
-          u("You can easily learn how to harness the movements of your own breath to heal and connect with your body's innate bio-intelligence.", "lead"),
-          u("Over the past three decades, I have dedicated my life to developing these somatic, breath-based neuromuscular exercises. I've spent thousands of hours working one-on-one with clients, gaining invaluable feedback and insight into what truly helps relieve pain and correct posture.", "body"),
-        ],
-      },
-      {
-        units: [
-          u("To date, I have trained nearly 500 instructors to teach my posture realignment methods and have guided thousands of people through my Change Your Posture, Change Your Life workshops and classes.", "body"),
-          u("Nearly 30 years into this journey, I continue to learn more every day—and remain inspired by the body's remarkable capacity to heal when given the right tools and awareness.", "body"),
-          u("These techniques are my life's work, and I hope they will continue to serve my fellow humans long after I leave this body.", "punchline"),
-        ],
-      },
-      {
-        units: [
-          u("It's often said that we have a health care crisis—but in truth, what we face is a self-care crisis. People need practical, effective tools that can quickly restore health, vitality, and a sense of well-being. That is why I remain deeply passionate about FitAlign Posture Training and YogAlign.", "body"),
-          u("I envision a world where our children play more, where we all sit less, and where the simple, powerful movements of breathing are used to restore the body's natural alignment—allowing every cell to thrive in harmony.", "lead"),
-          u("It is amazing to be in my 70's and taking up a new sport like wing foiling!", "punchline"),
-        ],
-      },
+      { units: [
+        u("I am simply a messenger—here to share these self-help tools. It is up to you to use them.", "body"),
+        u("Ultimately, no one can heal you but you.", "hero"),
+      ]},
+      { units: [
+        u("You can easily learn how to harness the movements of your own breath to heal and connect with your body's innate bio-intelligence.", "lead"),
+        u("Over the past three decades, I have dedicated my life to developing these somatic, breath-based neuromuscular exercises. I've spent thousands of hours working one-on-one with clients, gaining invaluable feedback and insight into what truly helps relieve pain and correct posture.", "body"),
+      ]},
+      { units: [
+        u("To date, I have trained nearly 500 instructors to teach my posture realignment methods and have guided thousands of people through my Change Your Posture, Change Your Life workshops and classes.", "body"),
+        u("Nearly 30 years into this journey, I continue to learn more every day—and remain inspired by the body's remarkable capacity to heal when given the right tools and awareness.", "body"),
+        u("These techniques are my life's work, and I hope they will continue to serve my fellow humans long after I leave this body.", "punchline"),
+      ]},
+      { units: [
+        u("It's often said that we have a health care crisis—but in truth, what we face is a self-care crisis. People need practical, effective tools that can quickly restore health, vitality, and a sense of well-being. That is why I remain deeply passionate about FitAlign Posture Training and YogAlign.", "body"),
+        u("I envision a world where our children play more, where we all sit less, and where the simple, powerful movements of breathing are used to restore the body's natural alignment—allowing every cell to thrive in harmony.", "lead"),
+        u("It is amazing to be in my 70's and taking up a new sport like wing foiling!", "punchline"),
+      ]},
     ],
   },
 ];
 
-// ─── NAVIGATION STATE ─────────────────────────────────────────────────────────
+// ─── FLAT SCREEN INDEX ────────────────────────────────────────────────────────
 
-// Flat index of all content screens
 const SCREEN_LIST = SECTIONS.flatMap((sec, si) =>
   sec.screens.map((screen, sci) => ({ si, sci, n: screen.units.length, section: sec, screen }))
 );
-
 const KEY = (si: number, sci: number) => `${si}-${sci}`;
-const SCREEN_IDX = new Map(SCREEN_LIST.map((s, i) => [KEY(s.si, s.sci), i]));
+// page 0 = cover, page 1..N = content screens (globalIdx = page - 1)
+const TOTAL_PAGES = 1 + SCREEN_LIST.length;
 
 // ─── TYPOGRAPHY ───────────────────────────────────────────────────────────────
 
@@ -248,79 +175,66 @@ function styleClass(s: S): string {
   const base = "text-center mx-auto";
   switch (s) {
     case "hero":
-      // Single iconic display line — Fraunces, light
       return `${base} max-w-[42rem] text-white/88 leading-[1.15] text-[clamp(2.4rem,6vw,5.2rem)]`;
     case "punchline":
-      // Emphatic declaration — Fraunces, semibold
       return `${base} max-w-[46rem] text-white/92 leading-[1.22] text-[clamp(1.55rem,3.6vw,3.1rem)]`;
     case "lead":
-      // Important supporting line — Fraunces, normal
       return `${base} max-w-[50rem] text-white/78 leading-[1.44] text-[clamp(1.1rem,2.5vw,1.9rem)]`;
     case "body":
-      // Readable paragraph text — DM Sans
       return `${base} max-w-[52rem] text-white/52 leading-[1.85] text-[clamp(0.9rem,1.5vw,1.18rem)]`;
   }
 }
 
 function fontStyle(s: S): React.CSSProperties {
-  if (s === "body") {
-    return { fontFamily: "'DM Sans', sans-serif" };
-  }
+  if (s === "body") return { fontFamily: "'DM Sans', sans-serif" };
   return { fontFamily: "'Fraunces', serif", fontOpticalSizing: "auto" } as React.CSSProperties;
 }
 
-// PT = paddingTop in vh for each numVisible count: keeps content balanced on screen
-const PT_BY_COUNT = [0, 36, 20, 9, 5];
-
-// ─── SCREEN VIEW ──────────────────────────────────────────────────────────────
+// ─── SCREEN ───────────────────────────────────────────────────────────────────
 
 function ScreenView({
-  screen,
-  bg,
-  revealed,
-  setRef,
+  screen, bg, revealed, isReplay, animKey,
 }: {
-  screen: Screen;
-  bg: string;
-  revealed: number;
-  setRef: (el: HTMLDivElement | null) => void;
+  screen: Screen; bg: string; revealed: number; isReplay: boolean; animKey: number;
 }) {
-  const pt = PT_BY_COUNT[Math.min(revealed, PT_BY_COUNT.length - 1)];
-
+  const units = isReplay ? screen.units : screen.units.slice(0, revealed);
   return (
     <div
-      ref={setRef}
-      className="h-screen overflow-hidden flex flex-col items-center px-8 md:px-16 gap-7"
-      style={{
-        background: bg,
-        paddingTop: `${pt}vh`,
-        transition: "padding-top 0.6s cubic-bezier(0.25,0.1,0.25,1)",
-      }}
+      className="absolute inset-0 overflow-hidden flex items-center justify-center px-8 md:px-14"
+      style={{ background: bg }}
     >
-      {screen.units.slice(0, revealed).map((unit, i) => (
-        <motion.p
-          key={i}
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.78, ease: EASE }}
-          className={styleClass(unit.s)}
-          style={fontStyle(unit.s)}
-        >
-          {unit.text}
-        </motion.p>
-      ))}
+      <motion.div
+        layout
+        transition={{ layout: { duration: 0.6, ease: EASE } }}
+        className="flex flex-col items-center w-full gap-12 py-14"
+      >
+        {units.map((unit, i) => (
+          <motion.p
+            key={`${animKey}-${i}`}
+            layout
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              layout: { duration: 0.6, ease: EASE },
+              opacity: { duration: 0.82, ease: EASE, delay: isReplay ? 0.08 + i * 0.21 : 0 },
+              y: { duration: 0.82, ease: EASE, delay: isReplay ? 0.08 + i * 0.21 : 0 },
+            }}
+            className={styleClass(unit.s)}
+            style={fontStyle(unit.s)}
+          >
+            {unit.text}
+          </motion.p>
+        ))}
+      </motion.div>
     </div>
   );
 }
 
 // ─── COVER ────────────────────────────────────────────────────────────────────
 
-function CoverScreen({ setRef }: { setRef: (el: HTMLDivElement | null) => void }) {
+function CoverScreen() {
   return (
-    <div
-      ref={setRef}
-      className="relative h-screen flex flex-col items-center justify-center overflow-hidden bg-[#080808]"
-    >
+    <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden bg-[#080808]">
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
@@ -339,9 +253,7 @@ function CoverScreen({ setRef }: { setRef: (el: HTMLDivElement | null) => void }
         <p
           className="text-[#c8a97e]/35 text-[8px] tracking-[0.58em] uppercase mb-10"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
-        >
-          Lesson One
-        </p>
+        ></p>
         <h1
           className="text-white leading-none"
           style={
@@ -356,7 +268,7 @@ function CoverScreen({ setRef }: { setRef: (el: HTMLDivElement | null) => void }
           FitAlign
         </h1>
         <p
-          className="text-white/14 text-[9px] tracking-[0.22em] mt-7"
+          className="text-white/14 tracking-[0.22em] mt-7 text-[#ffffffb8] text-[13px]"
           style={{ fontFamily: "'DM Sans', sans-serif" }}
         >
           Change Your Posture, Change Your Life
@@ -387,28 +299,38 @@ function CoverScreen({ setRef }: { setRef: (el: HTMLDivElement | null) => void }
 // ─── APP ──────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  // -1 = cover, 0..N-1 = content screen index
-  const [activeIdx, setActiveIdx] = useState(-1);
+  // pageIndex: 0 = cover, 1..N = content screen (globalIdx = pageIndex - 1)
+  const [pageIndex, setPageIndex] = useState(0);
   const [revealed, setRevealed] = useState<number[]>(() =>
     new Array(SCREEN_LIST.length).fill(0)
   );
+  const [isReplay, setIsReplay] = useState<boolean[]>(() =>
+    new Array(SCREEN_LIST.length).fill(false)
+  );
+  const [animKeys, setAnimKeys] = useState<number[]>(() =>
+    new Array(SCREEN_LIST.length).fill(0)
+  );
+  // When jumping via dot click, skip the slide animation
+  const [skipAnim, setSkipAnim] = useState(false);
 
-  // Refs to avoid stale closures in event handlers
-  const activeRef = useRef(-1);
+  const pageRef = useRef(0);
   const revRef = useRef<number[]>(new Array(SCREEN_LIST.length).fill(0));
   const lockRef = useRef(false);
-  const accRef = useRef(0); // wheel accumulator for trackpad
+  const accRef = useRef(0);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const domRefs = useRef<(HTMLDivElement | null)[]>(
-    new Array(SCREEN_LIST.length + 1).fill(null)
-  );
+  // Lock body scroll so the document itself never drifts
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
 
-  const scrollTo = useCallback((refIdx: number) => {
-    const c = containerRef.current;
-    const el = domRefs.current[refIdx];
-    if (!c || !el) return;
-    c.scrollTo({ top: el.offsetTop, behavior: "smooth" });
+  const goTo = useCallback((pg: number, animate = true) => {
+    if (!animate) {
+      setSkipAnim(true);
+      requestAnimationFrame(() => requestAnimationFrame(() => setSkipAnim(false)));
+    }
+    pageRef.current = pg;
+    setPageIndex(pg);
   }, []);
 
   const advance = useCallback(
@@ -417,155 +339,135 @@ export default function App() {
       lockRef.current = true;
       setTimeout(() => { lockRef.current = false; }, 380);
 
-      const cur = activeRef.current;
+      const pg = pageRef.current;
+      const gi = pg - 1; // global content-screen index; -1 when on cover
 
       if (forward) {
-        if (cur === -1) {
-          // Cover → screen 0
-          activeRef.current = 0;
-          const next = [...revRef.current];
-          if (next[0] < 1) next[0] = 1;
-          revRef.current = next;
-          setActiveIdx(0);
-          setRevealed([...next]);
-          scrollTo(1);
-        } else {
-          const curRev = revRef.current[cur];
-          const total = SCREEN_LIST[cur].n;
+        // If on a content screen with unrevealed units → reveal next unit only, no page change
+        if (gi >= 0) {
+          const curRev = revRef.current[gi];
+          const total = SCREEN_LIST[gi].n;
           if (curRev < total) {
-            // Reveal next unit in current screen
             const next = [...revRef.current];
-            next[cur] = curRev + 1;
+            next[gi] = curRev + 1;
             revRef.current = next;
             setRevealed([...next]);
-          } else if (cur < SCREEN_LIST.length - 1) {
-            // Advance to next screen
-            const ni = cur + 1;
-            activeRef.current = ni;
+            return; // ← early return: no page transition
+          }
+        }
+        // All units shown (or on cover) → advance to next page
+        if (pg < TOTAL_PAGES - 1) {
+          const nPg = pg + 1;
+          const nGi = nPg - 1;
+          goTo(nPg);
+          if (revRef.current[nGi] < 1) {
             const next = [...revRef.current];
-            if (next[ni] < 1) next[ni] = 1;
+            next[nGi] = 1;
             revRef.current = next;
-            setActiveIdx(ni);
             setRevealed([...next]);
-            scrollTo(ni + 1);
           }
         }
       } else {
-        // Back
-        if (cur > 0) {
-          const pi = cur - 1;
-          activeRef.current = pi;
-          setActiveIdx(pi);
-          scrollTo(pi + 1);
-        } else if (cur === 0 || cur === -1) {
-          activeRef.current = -1;
-          setActiveIdx(-1);
-          scrollTo(0);
+        if (pg > 0) {
+          const prevPg = pg - 1;
+          goTo(prevPg);
+          const prevGi = prevPg - 1;
+          if (prevGi >= 0) {
+            setIsReplay(prev => { const n = [...prev]; n[prevGi] = true; return n; });
+            setAnimKeys(prev => { const n = [...prev]; n[prevGi] = prev[prevGi] + 1; return n; });
+            const nextRev = [...revRef.current];
+            nextRev[prevGi] = SCREEN_LIST[prevGi].n;
+            revRef.current = nextRev;
+            setRevealed([...nextRev]);
+          }
         }
       }
     },
-    [scrollTo]
+    [goTo, setIsReplay, setAnimKeys]
   );
 
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       if (lockRef.current) { accRef.current = 0; return; }
       accRef.current += e.deltaY;
-      // Threshold: ~60px covers 1 mouse click (typical = 100-120) and ~4-5 trackpad ticks
       if (Math.abs(accRef.current) >= 55) {
-        const dir = accRef.current > 0;
+        advance(accRef.current > 0);
         accRef.current = 0;
-        advance(dir);
       }
     };
-
     const onKey = (e: KeyboardEvent) => {
       if (["ArrowDown", " ", "PageDown"].includes(e.key)) { e.preventDefault(); advance(true); }
       else if (["ArrowUp", "PageUp"].includes(e.key)) { e.preventDefault(); advance(false); }
     };
-
     let ty = 0;
-    const onTouchStart = (e: TouchEvent) => { ty = e.touches[0].clientY; };
-    const onTouchEnd = (e: TouchEvent) => {
+    const onTS = (e: TouchEvent) => { ty = e.touches[0].clientY; };
+    const onTE = (e: TouchEvent) => {
       const dy = ty - e.changedTouches[0].clientY;
       if (Math.abs(dy) > 55) advance(dy > 0);
     };
 
-    el.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKey);
-    el.addEventListener("touchstart", onTouchStart, { passive: true });
-    el.addEventListener("touchend", onTouchEnd, { passive: true });
-
+    window.addEventListener("touchstart", onTS, { passive: true });
+    window.addEventListener("touchend", onTE, { passive: true });
     return () => {
-      el.removeEventListener("wheel", onWheel);
+      window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKey);
-      el.removeEventListener("touchstart", onTouchStart);
-      el.removeEventListener("touchend", onTouchEnd);
+      window.removeEventListener("touchstart", onTS);
+      window.removeEventListener("touchend", onTE);
     };
   }, [advance]);
 
   // ── Progress ──────────────────────────────────────────────────────────────
   const totalUnits = useMemo(() => SCREEN_LIST.reduce((s, sc) => s + sc.n, 0), []);
-
   const doneUnits = useMemo(() => {
-    if (activeIdx < 0) return 0;
+    if (pageIndex === 0) return 0;
+    const gi = pageIndex - 1;
     let s = 0;
-    for (let i = 0; i < activeIdx; i++) s += SCREEN_LIST[i].n;
-    return s + (revealed[activeIdx] ?? 0);
-  }, [activeIdx, revealed]);
-
+    for (let i = 0; i < gi; i++) s += SCREEN_LIST[i].n;
+    return s + (revealed[gi] ?? 0);
+  }, [pageIndex, revealed]);
   const progressFrac = totalUnits > 0 ? doneUnits / totalUnits : 0;
-  const activeSi = activeIdx < 0 ? -1 : SCREEN_LIST[activeIdx].si;
+
+  const activeSi = pageIndex === 0 ? -1 : (SCREEN_LIST[pageIndex - 1]?.si ?? 0);
 
   const jumpToSection = useCallback(
     (si: number) => {
       const idx = SCREEN_LIST.findIndex((s) => s.si === si);
       if (idx < 0) return;
-      activeRef.current = idx;
-      const next = [...revRef.current];
-      if (next[idx] < 1) next[idx] = 1;
-      revRef.current = next;
-      setActiveIdx(idx);
-      setRevealed([...next]);
-      scrollTo(idx + 1);
+      const pg = idx + 1;
+      goTo(pg, false);
+      setIsReplay(prev => { const n = [...prev]; n[idx] = true; return n; });
+      setAnimKeys(prev => { const n = [...prev]; n[idx] = prev[idx] + 1; return n; });
+      const nextRev = [...revRef.current];
+      nextRev[idx] = SCREEN_LIST[idx].n;
+      revRef.current = nextRev;
+      setRevealed([...nextRev]);
     },
-    [scrollTo]
+    [goTo, setIsReplay, setAnimKeys]
   );
 
+  const slideTransition = skipAnim ? "none" : "transform 0.52s cubic-bezier(0.25,0.1,0.25,1)";
+
   return (
-    <div
-      ref={containerRef}
-      className="overflow-y-scroll h-screen bg-[#080808] [&::-webkit-scrollbar]:hidden"
-      style={{ scrollbarWidth: "none" as const }}
-    >
-      {/* ── Progress bar ─────────────────────────────────────────────────── */}
+    // Fixed viewport — no scroll container, no drift possible
+    <div className="fixed inset-0 overflow-hidden bg-[#080808]">
+
+      {/* ── Progress bar ───────────────────────────────────────────────── */}
       <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
         <div className="h-[1px] bg-white/[0.05]">
           <div
             className="h-full bg-[#c8a97e] origin-left"
-            style={{
-              transform: `scaleX(${progressFrac})`,
-              transition: "transform 0.5s ease",
-            }}
+            style={{ transform: `scaleX(${progressFrac})`, transition: "transform 0.5s ease" }}
           />
         </div>
         <div className="flex flex-col items-center gap-[6px] pt-[11px] pointer-events-auto">
           <div className="flex items-center gap-2">
-            {/* Cover dot */}
             <button
-              onClick={() => {
-                activeRef.current = -1;
-                setActiveIdx(-1);
-                scrollTo(0);
-              }}
+              onClick={() => goTo(0, false)}
               className={`rounded-full transition-all duration-500 cursor-pointer ${
-                activeIdx === -1
-                  ? "w-5 h-[2px] bg-[#c8a97e]"
-                  : "w-[3px] h-[3px] bg-white/12 hover:bg-white/28"
+                pageIndex === 0 ? "w-5 h-[2px] bg-[#c8a97e]" : "w-[3px] h-[3px] bg-white/12 hover:bg-white/28"
               }`}
             />
             {SECTIONS.map((_, i) => (
@@ -573,7 +475,7 @@ export default function App() {
                 key={i}
                 onClick={() => jumpToSection(i)}
                 className={`rounded-full transition-all duration-500 cursor-pointer ${
-                  activeSi === i
+                  activeSi === i && pageIndex > 0
                     ? "w-5 h-[2px] bg-[#c8a97e]"
                     : "w-[3px] h-[3px] bg-white/12 hover:bg-white/28"
                 }`}
@@ -581,25 +483,45 @@ export default function App() {
             ))}
           </div>
           <span
-            className="text-[8px] tracking-[0.32em] text-white/16 transition-all duration-300"
+            className="tracking-[0.32em] text-white/16 transition-all duration-300 text-[#ffffff75] text-[9px]"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
-            {activeSi < 0 ? "FITALIGN" : `${SECTIONS[activeSi].num} / 04`}
+            {pageIndex === 0 ? "INTRODUCTION" : `${SECTIONS[activeSi]?.num ?? "01"} / 04`}
           </span>
         </div>
       </div>
 
-      {/* ── Screens ──────────────────────────────────────────────────────── */}
-      <CoverScreen setRef={(el) => { domRefs.current[0] = el; }} />
+      {/* ── Cover — page 0 ─────────────────────────────────────────────── */}
+      <div
+        className="absolute inset-0"
+        style={{
+          transform: `translateY(${(0 - pageIndex) * 100}vh)`,
+          transition: slideTransition,
+          willChange: "transform",
+        }}
+      >
+        <CoverScreen />
+      </div>
 
-      {SCREEN_LIST.map((item, globalIdx) => (
-        <ScreenView
+      {/* ── Content screens — pages 1..N ──────────────────────────────── */}
+      {SCREEN_LIST.map((item, gi) => (
+        <div
           key={KEY(item.si, item.sci)}
-          screen={item.screen}
-          bg={item.section.bg}
-          revealed={revealed[globalIdx] ?? 0}
-          setRef={(el) => { domRefs.current[globalIdx + 1] = el; }}
-        />
+          className="absolute inset-0"
+          style={{
+            transform: `translateY(${(gi + 1 - pageIndex) * 100}vh)`,
+            transition: slideTransition,
+            willChange: "transform",
+          }}
+        >
+          <ScreenView
+            screen={item.screen}
+            bg={item.section.bg}
+            revealed={revealed[gi] ?? 0}
+            isReplay={isReplay[gi] ?? false}
+            animKey={animKeys[gi] ?? 0}
+          />
+        </div>
       ))}
     </div>
   );
