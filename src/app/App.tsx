@@ -181,13 +181,12 @@ function styleClass(s: S): string {
   }
 }
 
-function textStyle(s: S, large: boolean): React.CSSProperties {
-  const k = large ? 1.5 : 1;
+function textStyle(s: S): React.CSSProperties {
   const fontSize = {
-    hero:      `clamp(${2.4*k}rem,${6*k}vw,${5.2*k}rem)`,
-    punchline: `clamp(${1.55*k}rem,${3.6*k}vw,${3.1*k}rem)`,
-    lead:      `clamp(${1.1*k}rem,${2.5*k}vw,${1.9*k}rem)`,
-    body:      `clamp(${0.9*k}rem,${1.5*k}vw,${1.18*k}rem)`,
+    hero:      "clamp(2.4rem,6vw,5.2rem)",
+    punchline: "clamp(1.55rem,3.6vw,3.1rem)",
+    lead:      "clamp(1.1rem,2.5vw,1.9rem)",
+    body:      "clamp(0.9rem,1.5vw,1.18rem)",
   }[s];
   const font: React.CSSProperties = s === "body"
     ? { fontFamily: "'DM Sans', sans-serif" }
@@ -200,9 +199,9 @@ function textStyle(s: S, large: boolean): React.CSSProperties {
 const MT_TRANSITION = "margin-top 0.52s cubic-bezier(0.16,1,0.3,1)";
 
 function ScreenView({
-  screen, bg, revealed, isReplay, animKey, large,
+  screen, bg, revealed, isReplay, animKey,
 }: {
-  screen: Screen; bg: string; revealed: number; isReplay: boolean; animKey: number; large: boolean;
+  screen: Screen; bg: string; revealed: number; isReplay: boolean; animKey: number;
 }) {
   const units = isReplay ? screen.units : screen.units.slice(0, revealed);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -289,7 +288,7 @@ function ScreenView({
                 y: { duration: 0.82, ease: EASE, delay: staggerDelay },
               }}
               className={styleClass(unit.s)}
-              style={textStyle(unit.s, large)}
+              style={textStyle(unit.s)}
             >
               {unit.text}
             </motion.p>
@@ -380,7 +379,6 @@ export default function App() {
   const [animKeys, setAnimKeys] = useState<number[]>(() =>
     new Array(SCREEN_LIST.length).fill(0)
   );
-  const [largeText, setLargeText] = useState(false);
   // When jumping via dot click, skip the slide animation
   const [skipAnim, setSkipAnim] = useState(false);
 
@@ -599,33 +597,6 @@ export default function App() {
         </button>
       )}
 
-      {/* ── Large Text toggle — mobile only ────────────────────────────── */}
-      <button
-        className={`md:hidden fixed bottom-6 right-4 z-50 flex items-center gap-2 rounded-full px-4 py-2.5 border backdrop-blur-sm transition-all duration-300 active:scale-95 ${
-          largeText
-            ? "bg-[#c8a97e]/20 border-[#c8a97e]/50 text-[#c8a97e]"
-            : "bg-white/[0.07] border-white/[0.1] text-white/50"
-        }`}
-        style={{ fontFamily: "'DM Sans', sans-serif", fontSize: "13px", letterSpacing: "0.04em" }}
-        onClick={() => {
-          setLargeText(v => !v);
-          // Reset current content screen to first unit so layout re-centers with new font sizes
-          const gi = pageRef.current - 1;
-          if (gi >= 0) {
-            const next = [...revRef.current];
-            next[gi] = 1;
-            revRef.current = next;
-            setRevealed([...next]);
-            setIsReplay(prev => { const n = [...prev]; n[gi] = false; return n; });
-            setAnimKeys(prev => { const n = [...prev]; n[gi] = prev[gi] + 1; return n; });
-          }
-        }}
-        aria-pressed={largeText}
-        aria-label="Toggle large text for accessibility"
-      >
-        <span style={{ fontSize: "17px", fontWeight: 700, lineHeight: 1 }}>Aa</span>
-        Large Text
-      </button>
 
       {/* ── Cover — page 0 ─────────────────────────────────────────────── */}
       <div
@@ -656,7 +627,6 @@ export default function App() {
             revealed={revealed[gi] ?? 0}
             isReplay={isReplay[gi] ?? false}
             animKey={animKeys[gi] ?? 0}
-            large={largeText}
           />
         </div>
       ))}
