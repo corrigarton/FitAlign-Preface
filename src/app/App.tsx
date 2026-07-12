@@ -208,6 +208,8 @@ function ScreenView({
   const containerRef = useRef<HTMLDivElement>(null);
   const groupRef = useRef<HTMLDivElement>(null);
   const [overflowMode, setOverflowMode] = useState(false);
+  // False until the first unit has been revealed — used to snap on first appearance
+  const everRevealedRef = useRef(false);
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -216,32 +218,41 @@ function ScreenView({
 
     const containerH = container.clientHeight;
     const groupH = group.scrollHeight;
+    const isOver = groupH > containerH;
 
     const applyMt = (mt: number, animate: boolean) => {
       group.style.transition = animate ? MT_TRANSITION : "none";
       group.style.marginTop = `${mt}px`;
     };
 
-    if (isReplay) {
-      // Snap to center all content immediately — units stagger in from there
-      setOverflowMode(false);
-      applyMt(Math.max(0, (containerH - groupH) / 2), false);
-      return;
-    }
-
-    const isOver = groupH > containerH;
-    setOverflowMode(isOver);
-
-    // Snap on first reveal of a screen, animate on subsequent reveals
-    const shouldAnimate = revealed > 1;
-
-    if (isOver) {
+    const centerLast = (animate: boolean) => {
       const lastEl = group.children[group.children.length - 1] as HTMLElement;
       const currentMt = parseFloat(group.style.marginTop) || 0;
       const intraTop = lastEl.offsetParent === container
         ? lastEl.offsetTop - currentMt
         : lastEl.offsetTop;
-      applyMt(containerH / 2 - intraTop - lastEl.offsetHeight / 2, shouldAnimate);
+      applyMt(containerH / 2 - intraTop - lastEl.offsetHeight / 2, animate);
+    };
+
+    if (isReplay) {
+      // Restore the final state of this screen: overflow gets last-unit-centered+dimmed,
+      // non-overflow gets all-content-centered with stagger.
+      setOverflowMode(isOver);
+      if (isOver) {
+        centerLast(false);
+      } else {
+        applyMt(Math.max(0, (containerH - groupH) / 2), false);
+      }
+      return;
+    }
+
+    setOverflowMode(isOver);
+    // Snap on the very first appearance of this screen; animate all subsequent changes
+    const shouldAnimate = everRevealedRef.current;
+    everRevealedRef.current = true;
+
+    if (isOver) {
+      centerLast(shouldAnimate);
     } else {
       applyMt(Math.max(0, (containerH - groupH) / 2), shouldAnimate);
     }
@@ -262,7 +273,10 @@ function ScreenView({
       >
         {units.map((unit, i) => {
           const isNewest = i === units.length - 1;
-          const dimmed = overflowMode && !isNewest && !isReplay;
+          // Dimming applies in overflow mode always (including overflow replay)
+          const dimmed = overflowMode && !isNewest;
+          // Stagger only for non-overflow replay (overflow replay snaps to final state)
+          const staggerDelay = isReplay && !overflowMode ? 0.08 + i * 0.21 : 0;
           return (
             <motion.p
               key={`${animKey}-${i}`}
@@ -271,8 +285,8 @@ function ScreenView({
               animate={{ opacity: dimmed ? 0.32 : 1, y: 0 }}
               transition={{
                 layout: { duration: 0.6, ease: EASE },
-                opacity: { duration: 0.82, ease: EASE, delay: isReplay ? 0.08 + i * 0.21 : 0 },
-                y: { duration: 0.82, ease: EASE, delay: isReplay ? 0.08 + i * 0.21 : 0 },
+                opacity: { duration: 0.82, ease: EASE, delay: staggerDelay },
+                y: { duration: 0.82, ease: EASE, delay: staggerDelay },
               }}
               className={styleClass(unit.s)}
               style={textStyle(unit.s, large)}
@@ -425,6 +439,17 @@ export default function App() {
           }
         }
       } else {
+        // Step back within the current section first, before going to previous page
+        if (gi >= 0 && revRef.current[gi] > 1) {
+          const next = [...revRef.current];
+          next[gi] = revRef.current[gi] - 1;
+          revRef.current = next;
+          setRevealed([...next]);
+          // Clear isReplay so slice(0, revealed) takes effect
+          setIsReplay(prev => { const n = [...prev]; n[gi] = false; return n; });
+          return;
+        }
+        // At first unit (or on cover) → go to previous page
         if (pg > 0) {
           const prevPg = pg - 1;
           goTo(prevPg);
@@ -444,16 +469,7 @@ export default function App() {
   );
 
   useEffect(() => {
-    const getScrollEl = (target: EventTarget | null) =>
-      (target as Element)?.closest("[data-content-scroll]") as HTMLElement | null;
-    const scrollBound = (el: HTMLElement, down: boolean) => {
-      const { scrollTop, scrollHeight, clientHeight } = el;
-      return down ? scrollTop + clientHeight >= scrollHeight - 2 : scrollTop <= 1;
-    };
-
     const onWheel = (e: WheelEvent) => {
-      const el = getScrollEl(e.target);
-      if (el && !scrollBound(el, e.deltaY > 0)) return; // let element scroll natively
       e.preventDefault();
       if (lockRef.current) { accRef.current = 0; return; }
       accRef.current += e.deltaY;
@@ -467,14 +483,9 @@ export default function App() {
       else if (["ArrowUp", "PageUp"].includes(e.key)) { e.preventDefault(); advance(false); }
     };
     let ty = 0;
-    let touchEl: HTMLElement | null = null;
-    const onTS = (e: TouchEvent) => {
-      ty = e.touches[0].clientY;
-      touchEl = getScrollEl(e.target);
-    };
+    const onTS = (e: TouchEvent) => { ty = e.touches[0].clientY; };
     const onTE = (e: TouchEvent) => {
       const dy = ty - e.changedTouches[0].clientY;
-      if (touchEl && !scrollBound(touchEl, dy > 0)) return;
       if (Math.abs(dy) > 55) advance(dy > 0);
     };
 
