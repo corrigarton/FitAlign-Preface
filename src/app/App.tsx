@@ -471,13 +471,11 @@ const MT_TRANSITION =
 
 function ScreenView({
   screen,
-  bg,
   revealed,
   isReplay,
   animKey,
 }: {
   screen: Screen;
-  bg: string;
   revealed: number;
   isReplay: boolean;
   animKey: number;
@@ -553,7 +551,6 @@ function ScreenView({
       ref={containerRef}
       data-content-scroll
       className="absolute inset-0 overflow-hidden px-8 md:px-14"
-      style={{ background: bg }}
     >
       <motion.div
         ref={groupRef as React.RefObject<HTMLDivElement>}
@@ -603,7 +600,7 @@ function ScreenView({
 
 function CoverScreen() {
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden bg-[#080808]">
+    <div className="absolute inset-0 flex flex-col items-center justify-center overflow-hidden">
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
@@ -897,12 +894,17 @@ export default function App() {
     ? "none"
     : "transform 0.52s cubic-bezier(0.25,0.1,0.25,1)";
 
+  // Background changes only at section boundaries (not per-screen)
+  const currentBg = pageIndex === 0
+    ? "#080808"
+    : SCREEN_LIST[pageIndex - 1]?.section.bg ?? "#080808";
+
   return (
     // Fixed viewport — no scroll container, no drift possible
     // touch-action:none tells browser we handle all gestures ourselves
     <div
-      className="fixed inset-0 overflow-hidden bg-[#080808]"
-      style={{ touchAction: "none" }}
+      className="fixed inset-0 overflow-hidden"
+      style={{ touchAction: "none", background: currentBg, transition: "background 0.6s ease" }}
     >
       {/* ── Progress bar ───────────────────────────────────────────────── */}
       <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
@@ -1013,7 +1015,6 @@ export default function App() {
         >
           <ScreenView
             screen={item.screen}
-            bg={item.section.bg}
             revealed={revealed[gi] ?? 0}
             isReplay={isReplay[gi] ?? false}
             animKey={animKeys[gi] ?? 0}
