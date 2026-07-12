@@ -483,16 +483,20 @@ export default function App() {
       else if (["ArrowUp", "PageUp"].includes(e.key)) { e.preventDefault(); advance(false); }
     };
     let ty = 0;
-    const onTS = (e: TouchEvent) => { ty = e.touches[0].clientY; };
+    const onTS = (e: TouchEvent) => {
+      e.preventDefault();
+      ty = e.touches[0].clientY;
+    };
     const onTE = (e: TouchEvent) => {
+      e.preventDefault();
       const dy = ty - e.changedTouches[0].clientY;
-      if (Math.abs(dy) > 55) advance(dy > 0);
+      if (Math.abs(dy) > 40) advance(dy > 0);
     };
 
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKey);
-    window.addEventListener("touchstart", onTS, { passive: true });
-    window.addEventListener("touchend", onTE, { passive: true });
+    window.addEventListener("touchstart", onTS, { passive: false });
+    window.addEventListener("touchend", onTE, { passive: false });
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("keydown", onKey);
@@ -534,7 +538,8 @@ export default function App() {
 
   return (
     // Fixed viewport — no scroll container, no drift possible
-    <div className="fixed inset-0 overflow-hidden bg-[#080808]">
+    // touch-action:none tells browser we handle all gestures ourselves
+    <div className="fixed inset-0 overflow-hidden bg-[#080808]" style={{ touchAction: "none" }}>
 
       {/* ── Progress bar ───────────────────────────────────────────────── */}
       <div className="fixed top-0 left-0 right-0 z-50 pointer-events-none">

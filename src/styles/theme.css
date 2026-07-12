@@ -135,6 +135,10 @@
 
   html {
     font-size: var(--font-size);
+    /* Prevent iOS/Android from inflating fonts via accessibility text-size settings.
+       We provide our own Large Text toggle instead. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   h1 {
