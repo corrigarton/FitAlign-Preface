@@ -17,7 +17,7 @@ function figmaAssetResolver() {
 }
 
 export default defineConfig({
-  base: '/fitalign/',
+  base: '/course/',
   
   plugins: [
     figmaAssetResolver(),
